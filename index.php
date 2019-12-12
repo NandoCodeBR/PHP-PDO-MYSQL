@@ -3,7 +3,7 @@
     $database = "dbname=php_com_pdo";
     
 
-        if(!empty($_GET['nome'])) {
+        if(!empty($_GET['senha'])) {
         $conexao = new PDO($host.$database, 'root','');
 
         /*$query = 'create table usuario (
@@ -39,15 +39,15 @@
         Se você digitar f'; delete from usuario where 'a'='a no campo email, irá deletar todos os registros         */
         /*Para tratar isso, basta fazer:*/
         $query = "select * from usuario where";
-        $query .= " nome = :nome";
+        $query .= " senha = :senha";
         $stmt = $conexao->prepare($query);
-        $stmt->bindValue(':nome', $_GET['nome']);
+        $stmt->bindValue(':senha', $_GET['senha'], PDO::PARAM_INT);
         $stmt->execute();
-        $resultado = $stmt->fetch();
-        echo $query;
-        echo "<pre>";
-        print_r($resultado);
-        echo "</pre>";
+        $resultado = $stmt->fetchAll();
+        foreach($resultado as $key =>$value) {
+        echo $value['nome'], $value['email'];
+        echo '<hr>';
+        }
     } else {
         echo "digite seu nome e senha";
     }
