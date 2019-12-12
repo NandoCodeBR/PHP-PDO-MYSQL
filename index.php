@@ -2,10 +2,10 @@
     $host = "mysql:host=localhost;";
     $database = "dbname=php_com_pdo";
     
-    try{
+
+        if(!empty($_GET['nome'])) {
         $conexao = new PDO($host.$database, 'root','');
-        $nome = $_GET['nome'];
-        $email = $_GET['email'];
+
         /*$query = 'create table usuario (
                 id int not null primary key auto_increment,
                 nome varchar(50) not null,
@@ -22,15 +22,33 @@
         $retorno = $conexao->exec($query);
          * 
         echo $retorno; */
-        $query = 'SELECT nome FROM usuario WHERE nome LIKE"%'."$nome%".'"';
-        $stmt = $conexao->query($query);
-        $list = $stmt->fetch(PDO::FETCH_OBJ); /*use o PDO::FETCH_NUM para passar com os IDS Numéricos
+
+
+
+        
+         /*use o PDO::FETCH_NUM para passar com os IDS Numéricos
                                                    PDO::FETCH_ASSOC para passar com os IDS Associativos         */
+      /*  foreach ($conexao->query($query) as $key => $value){
+            echo $value['email'], $value['nome'];
+            echo "<hr>";
+        } */
+        
+        
+  
+        /*SQL INJECTION:
+        Se você digitar f'; delete from usuario where 'a'='a no campo email, irá deletar todos os registros         */
+        /*Para tratar isso, basta fazer:*/
+        $query = "select * from usuario where";
+        $query .= " nome = :nome";
+        $stmt = $conexao->prepare($query);
+        $stmt->bindValue(':nome', $_GET['nome']);
+        $stmt->execute();
+        $resultado = $stmt->fetch();
+        echo $query;
         echo "<pre>";
-        echo $list->nome;
+        print_r($resultado);
         echo "</pre>";
-    } catch (PDOException $ex) {
-        echo 'ERRO! Código:'.$ex->getCode(). ' Mensagem do erro: '.$ex->getMessage();
+    } else {
+        echo "digite seu nome e senha";
     }
-    
 ?>
